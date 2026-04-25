@@ -1006,7 +1006,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Quotation History Logic ---
-    let mockQuotations = [];
+    let mockQuotations = JSON.parse(localStorage.getItem('spr_mockQuotations')) || [];
 
     function renderQuotationsTable() {
         const tbody = document.getElementById('quotations-table-body');
@@ -1093,6 +1093,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 netPrice: parseInt(netText),
                 status: 'Quoted'
             });
+            localStorage.setItem('spr_mockQuotations', JSON.stringify(mockQuotations));
             renderQuotationsTable();
 
             // Hide Modal, switch to Document View
@@ -1130,6 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const qtIndex = mockQuotations.findIndex(q => q.id === currentQtId);
             if (qtIndex > -1) {
                 mockQuotations[qtIndex].status = 'Booked';
+                localStorage.setItem('spr_mockQuotations', JSON.stringify(mockQuotations));
                 renderQuotationsTable();
             }
 
@@ -1154,6 +1156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 netPrice: parseInt(netText) || 0,
                 status: 'Active'
             });
+            localStorage.setItem('spr_mockBookings', JSON.stringify(mockBookings));
             renderBookingsTable();
 
             const uiUnit = document.querySelector(`.unit-box[data-unit="${unitNo}"]`);
@@ -1175,7 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Bookings Menu Logic ---
-    let mockBookings = [];
+    let mockBookings = JSON.parse(localStorage.getItem('spr_mockBookings')) || [];
 
     function renderBookingsTable() {
         const tbody = document.getElementById('bookings-table-body');
@@ -1196,6 +1199,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionButtons = isActive
                 ? `<button class="btn btn-sm btn-outline-info rounded-pill px-3 shadow-sm me-1 fw-medium" onclick="viewBooking('${bk.id}')">
                         <i class="bi bi-eye"></i> <span class="d-none d-md-inline"><span class="text-th">ดู</span><span class="text-en">View</span></span>
+                   </button>
+                   <button class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm me-1 fw-medium" onclick="viewBookingDocument('${bk.id}')">
+                        <i class="bi bi-file-earmark-text"></i> <span class="d-none d-md-inline"><span class="text-th">เอกสาร</span><span class="text-en">Doc</span></span>
                    </button>
                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm fw-medium" onclick="cancelBooking('${bk.id}')">
                          <i class="bi bi-x-circle"></i> <span class="d-none d-md-inline"><span class="text-th">ยกเลิก</span><span class="text-en">Cancel</span></span>
@@ -1233,6 +1239,143 @@ document.addEventListener('DOMContentLoaded', () => {
             bookingModal.show();
         }
     };
+
+    window.viewBookingDocument = function (id) {
+        const bk = mockBookings.find(b => b.id === id);
+        if (bk) {
+            document.getElementById('bdoc-customer-name').textContent = bk.customer;
+            document.getElementById('bdoc-date').textContent = bk.date;
+            document.getElementById('bdoc-ref').textContent = bk.id;
+            document.getElementById('bdoc-unit').textContent = bk.unit;
+            
+            // Look up unit details to get floor and type (mocking it for now if not available)
+            const qt = mockQuotations.find(q => q.unit === bk.unit);
+            document.getElementById('bdoc-floor').textContent = qt ? qt.floor : '-';
+            document.getElementById('bdoc-type').textContent = qt ? qt.type : '-';
+            // Need a default location if qt is not found, fallback to '-'
+            
+            document.getElementById('bdoc-price').textContent = `฿ ${bk.price ? bk.price.toLocaleString() : '0'}`;
+            document.getElementById('bdoc-contract-fee').textContent = `฿ ${bk.contractFee ? bk.contractFee.toLocaleString() : '0'}`;
+            document.getElementById('bdoc-discount').textContent = `- ฿ ${bk.discount ? bk.discount.toLocaleString() : '0'}`;
+            document.getElementById('bdoc-net-price').textContent = `฿ ${bk.netPrice ? bk.netPrice.toLocaleString() : '0'}`;
+
+            // Reset signature
+            const sigImg = document.getElementById('customer-signature-img');
+            if (sigImg) {
+                sigImg.classList.add('d-none');
+                sigImg.src = '';
+            }
+
+            switchView('view-booking-document');
+        }
+    };
+
+    const btnBackToBookings = document.getElementById('btn-back-to-bookings');
+    if (btnBackToBookings) {
+        btnBackToBookings.addEventListener('click', () => switchView('view-bookings'));
+    }
+
+    // Signature Pad Logic
+    const canvas = document.getElementById('signature-pad');
+    let ctx = null;
+    let isDrawing = false;
+    let signModal = null;
+
+    if (canvas) {
+        ctx = canvas.getContext('2d');
+        const modalEl = document.getElementById('signDocumentModal');
+        if (modalEl) {
+            signModal = new bootstrap.Modal(modalEl);
+        }
+
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            ctx.scale(ratio, ratio);
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#000';
+        }
+
+        window.openSignModal = function() {
+            if (signModal) {
+                signModal.show();
+                setTimeout(resizeCanvas, 200);
+            }
+        };
+
+        window.clearSignature = function() {
+            if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        };
+
+        window.saveSignature = function() {
+            const dataUrl = canvas.toDataURL();
+            const img = document.getElementById('customer-signature-img');
+            if (img) {
+                img.src = dataUrl;
+                img.classList.remove('d-none');
+            }
+            if (signModal) signModal.hide();
+        };
+
+        window.shareSignLink = function() {
+            const bkId = document.getElementById('bdoc-ref').textContent;
+            let path = window.location.pathname;
+            if(path.endsWith('index.html')) {
+                path = path.replace('index.html', 'sign.html');
+            } else {
+                if(!path.endsWith('/')) path += '/';
+                path += 'sign.html';
+            }
+            const link = window.location.origin + path + "?booking=" + bkId;
+            navigator.clipboard.writeText(link).then(() => {
+                alert((document.body.classList.contains('lang-en') ? "Link copied to clipboard!\n" : "คัดลอกลิงก์สำหรับเซ็นเอกสารออนไลน์แล้ว!\n") + link);
+            }).catch(err => {
+                alert("Failed to copy link: " + link);
+            });
+        };
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        const startDrawing = (e) => {
+            e.preventDefault();
+            isDrawing = true;
+            const pos = getPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        };
+
+        const draw = (e) => {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        };
+
+        const stopDrawing = () => {
+            isDrawing = false;
+            ctx.closePath();
+        };
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing, {passive: false});
+        canvas.addEventListener('touchmove', draw, {passive: false});
+        canvas.addEventListener('touchend', stopDrawing);
+    }
 
     window.cancelBooking = function (id) {
         if (confirm('คุณต้องการยกเลิกการจองห้องนี้ใช่หรือไม่? (Are you sure you want to cancel this booking?)')) {

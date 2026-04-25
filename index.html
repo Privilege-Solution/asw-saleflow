@@ -631,6 +631,124 @@
 
             </div>
         </section>
+
+        <!-- VIEW: BOOKING DOCUMENT -->
+        <section id="view-booking-document" class="app-view d-none font-thai pb-5">
+            <div
+                class="d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center mb-4 gap-3">
+                <button class="btn btn-outline-secondary rounded-pill px-4" id="btn-back-to-bookings">
+                    <i class="bi bi-arrow-left me-1"></i> <span class="text-th">กลับไปหน้ารายการจอง</span><span
+                        class="text-en">Back</span>
+                </button>
+                <div class="d-flex flex-wrap gap-2 gap-sm-3">
+                    <button class="btn btn-dark fw-medium rounded-pill px-4 shadow-sm" onclick="openSignModal()">
+                        <i class="bi bi-pen me-1"></i> <span class="text-th">เซ็นเอกสาร (ลูกค้า)</span><span class="text-en">Sign Document</span>
+                    </button>
+                    <button class="btn btn-info text-white fw-medium rounded-pill px-4 shadow-sm" onclick="shareSignLink()">
+                        <i class="bi bi-link-45deg me-1"></i> <span class="text-th">แชร์ลิงก์สำหรับเซ็น</span><span class="text-en">Share Sign Link</span>
+                    </button>
+                    <button class="btn fw-medium btn-secondary rounded-pill px-4 shadow-sm" onclick="window.print()">
+                        <span class="text-th">พิมพ์เอกสาร</span><span class="text-en">Print</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- A4 Paper styling -->
+            <div class="mx-auto bg-white p-4 p-md-5 shadow-sm border text-dark"
+                style="max-width: 800px; min-height: 1100px;">
+                <div class="text-center pb-4 border-bottom mb-4">
+                    <div class="rounded bg-gradient-gold text-white fw-bold d-inline-flex mx-auto align-items-center justify-content-center mb-2 shadow-sm"
+                        style="width: 60px; height: 60px; font-size:1.8rem;">S</div>
+                    <h2 class="fw-bold mb-1 mt-2">Siam Premium Residences</h2>
+                    <h4 class="text-muted"><span class="text-th">ใบจองห้องชุด</span><span class="text-en">Booking Document</span>
+                    </h4>
+                </div>
+
+                <div class="row mb-5">
+                    <div class="col-8">
+                        <div class="mb-2"><strong><span class="text-th">เรียน: </span><span class="text-en">To:
+                                </span></strong></div>
+                        <div id="bdoc-customer-name" class="p-2 bg-light rounded d-inline-block min-w-50">-</div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="mb-1"><strong><span class="text-th">วันที่: </span><span class="text-en">Date:
+                                </span></strong> <span id="bdoc-date">-</span></div>
+                        <div><strong><span class="text-th">รหัส: </span><span class="text-en">Booking No: </span></strong>
+                            <span id="bdoc-ref">-</span></div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-3 border-start border-4 border-gold ps-2"><span
+                        class="text-th">รายละเอียดห้องชุด</span><span class="text-en">Unit Details</span></h5>
+                <table class="table table-bordered mb-5">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th><span class="text-th">รหัสห้อง</span><span class="text-en">Unit No.</span></th>
+                            <th><span class="text-th">ชั้น</span><span class="text-en">Floor</span></th>
+                            <th><span class="text-th">รูปแบบ</span><span class="text-en">Type</span></th>
+                            <th><span class="text-th">ตำแหน่ง</span><span class="text-en">Location</span></th>
+                            <th><span class="text-th">ขนาด</span><span class="text-en">Size (sq.m.)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr>
+                            <td id="bdoc-unit">-</td>
+                            <td id="bdoc-floor">-</td>
+                            <td id="bdoc-type">-</td>
+                            <td id="bdoc-location">-</td>
+                            <td>35.5</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="fw-bold mb-3 border-start border-4 border-gold ps-2"><span
+                        class="text-th">สรุปการเงิน</span><span class="text-en">Financial Summary</span></h5>
+                <div class="border p-4 mb-5 bg-light bg-opacity-25 rounded-4 shadow-sm">
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span class="fw-medium">ราคาหน้าสัญญา (Contract Price)</span>
+                        <span class="fw-bold" id="bdoc-price">฿ 0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-secondary">
+                        <span>เงินจอง (Reservation Fee)</span>
+                        <span>฿ 50,000</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-secondary">
+                        <span>เงินทำสัญญา (Contract Fee)</span>
+                        <span id="bdoc-contract-fee">฿ 0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 pb-3 text-danger border-bottom">
+                        <span>ส่วนลด และโปรโมชั่นเสริม (Discount)</span>
+                        <span id="bdoc-discount">- ฿ 0</span>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold fs-5 text-success pt-2">
+                        <span>ราคาสุทธิ (Net Price)</span>
+                        <span id="bdoc-net-price">฿ 0</span>
+                    </div>
+                </div>
+
+                <div class="row text-center mt-5 pt-5 px-3">
+                    <div class="col-6">
+                        <div class="border-bottom mx-auto mb-2 border-secondary position-relative" style="width: 80%; height: 60px;">
+                            <img id="customer-signature-img" class="d-none position-absolute bottom-0 start-50 translate-middle-x" style="max-height: 80px;" src="">
+                        </div>
+                        <div class="text-muted"><span class="text-th">(ลงชื่อลูกค้า / ผู้จอง)</span><span
+                                class="text-en">(Customer Signature)</span></div>
+                        <div class="mt-4 border-bottom mx-auto border-secondary" style="width: 80%;"></div>
+                        <div class="text-muted small mt-1"><span class="text-th">วันที่</span><span
+                                class="text-en">Date</span></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border-bottom mx-auto mb-2 border-secondary" style="width: 80%; height: 60px;"></div>
+                        <div class="text-muted"><span class="text-th">(ลงชื่อเจ้าหน้าที่ฝ่ายขาย)</span><span
+                                class="text-en">(Sales Signature)</span></div>
+                        <div class="mt-4 border-bottom mx-auto border-secondary" style="width: 80%;"></div>
+                        <div class="text-muted small mt-1"><span class="text-th">วันที่</span><span
+                                class="text-en">Date</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
     </main>
 
     <!-- Bootstrap Modal for Quotation -->
@@ -1134,6 +1252,34 @@
                     <button type="button" class="btn btn-danger fw-bold px-4 rounded-pill text-white shadow-sm"
                         id="btn-save-promotion">
                         <span class="text-th">เพิ่ม promotion</span><span class="text-en">Add Promotion</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Modal for Signature -->
+    <div class="modal fade" id="signDocumentModal" tabindex="-1" aria-labelledby="signDocumentModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg font-thai text-dark rounded-4">
+                <div class="modal-header border-bottom px-4 pt-4 pb-3">
+                    <h5 class="modal-title fw-bold text-dark" id="signDocumentModalLabel">
+                        <i class="bi bi-pen me-2"></i><span class="text-th">เซ็นเอกสารจองห้องชุด</span><span class="text-en">Sign Booking Document</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light bg-opacity-50 text-center">
+                    <div class="bg-white border rounded-3 p-2 mb-3">
+                        <canvas id="signature-pad" class="w-100" style="height: 200px; border: 1px dashed #ccc; touch-action: none; cursor: crosshair;"></canvas>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="clearSignature()"><i class="bi bi-eraser"></i> ล้างลายเซ็น (Clear)</button>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4 pt-3 bg-light bg-opacity-50 justify-content-end rounded-bottom-4">
+                    <button type="button" class="btn btn-light border px-4 rounded-pill" data-bs-dismiss="modal">
+                        <span class="text-th">ยกเลิก</span><span class="text-en">Cancel</span>
+                    </button>
+                    <button type="button" class="btn btn-dark fw-bold px-4 rounded-pill shadow-sm" onclick="saveSignature()">
+                        <span class="text-th">บันทึกลายเซ็น</span><span class="text-en">Save Signature</span>
                     </button>
                 </div>
             </div>
