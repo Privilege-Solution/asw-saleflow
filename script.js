@@ -372,6 +372,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset Form
         customerSelect.value = '';
+        const btnEditCustomerQuote = document.getElementById('btn-edit-customer-quote');
+        const btnAddCustomerLocal = document.getElementById('btn-add-customer');
+        if (btnEditCustomerQuote && btnAddCustomerLocal) {
+            btnEditCustomerQuote.style.display = 'none';
+            btnAddCustomerLocal.style.borderRadius = '0 0.375rem 0.375rem 0';
+        }
         const bookedBySelect = document.getElementById('booked-by-select');
         if (bookedBySelect) bookedBySelect.value = 'Sale';
         selectedUnitBoxRef = elementBox;
@@ -724,16 +730,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return check === parseInt(id.charAt(12));
     }
 
+    function formatThaiNationalID(val) {
+        let cleanVal = val.replace(/[^0-9]/g, '');
+        let formatted = '';
+        if (cleanVal.length > 0) formatted += cleanVal.substring(0, 1);
+        if (cleanVal.length > 1) formatted += '-' + cleanVal.substring(1, 5);
+        if (cleanVal.length > 5) formatted += '-' + cleanVal.substring(5, 10);
+        if (cleanVal.length > 10) formatted += '-' + cleanVal.substring(10, 12);
+        if (cleanVal.length > 12) formatted += '-' + cleanVal.substring(12, 13);
+        return formatted;
+    }
+
     if (formCustIdentify) {
         formCustIdentify.addEventListener('input', function (e) {
-            let val = this.value.replace(/[^0-9]/g, '');
-            let formatted = '';
-            if (val.length > 0) formatted += val.substring(0, 1);
-            if (val.length > 1) formatted += '-' + val.substring(1, 5);
-            if (val.length > 5) formatted += '-' + val.substring(5, 10);
-            if (val.length > 10) formatted += '-' + val.substring(10, 12);
-            if (val.length > 12) formatted += '-' + val.substring(12, 13);
-            this.value = formatted;
+            this.value = formatThaiNationalID(this.value);
+        });
+    }
+
+    const editCustIdentify = document.getElementById('editCustIdentify');
+    if (editCustIdentify) {
+        editCustIdentify.addEventListener('input', function (e) {
+            this.value = formatThaiNationalID(this.value);
         });
     }
 
@@ -745,6 +762,41 @@ document.addEventListener('DOMContentLoaded', () => {
             formCustPhone.value = '';
             formCustEmail.value = '';
             addCustModal.show();
+        });
+    }
+
+    // --- Edit Customer Quote Button Toggle ---
+    const btnEditCustomerQuote = document.getElementById('btn-edit-customer-quote');
+    if (customerSelect && btnEditCustomerQuote && btnAddCustomer) {
+        customerSelect.addEventListener('input', (e) => {
+            if (e.target.value.trim() !== '') {
+                btnEditCustomerQuote.style.display = 'inline-block';
+                btnAddCustomer.style.borderRadius = '0';
+            } else {
+                btnEditCustomerQuote.style.display = 'none';
+                btnAddCustomer.style.borderRadius = '0 0.375rem 0.375rem 0';
+            }
+        });
+        
+        btnEditCustomerQuote.addEventListener('click', () => {
+            if (editCustModal) {
+                // Try to parse name from "คุณสมชาย (081-123-4567)"
+                const val = customerSelect.value;
+                const nameParts = val.split(' (');
+                let name = nameParts[0].trim();
+                let phone = nameParts.length > 1 ? nameParts[1].replace(')', '').trim() : '';
+                
+                const editCustFirstName = document.getElementById('editCustFirstName');
+                const editCustPhone = document.getElementById('editCustPhone');
+                const editCustIdentifyModal = document.getElementById('editCustIdentify');
+                
+                // Prefill existing data if elements exist
+                if (editCustFirstName) editCustFirstName.value = name;
+                if (editCustPhone) editCustPhone.value = phone;
+                if (editCustIdentifyModal) editCustIdentifyModal.value = '';
+                
+                editCustModal.show();
+            }
         });
     }
 
@@ -939,8 +991,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.getElementById('customers-table-body');
         if (!tbody) return;
         tbody.innerHTML = '';
+        
+        const searchInput = document.getElementById('search-customer-input');
+        const keyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
         mockCustomers.forEach(cust => {
+            if (keyword) {
+                const searchString = `${cust.firstName} ${cust.lastName} ${cust.phone} ${cust.email || ''}`.toLowerCase();
+                if (!searchString.includes(keyword)) return;
+            }
+            
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td class="ps-4 fw-medium">${cust.firstName} ${cust.lastName}</td>
@@ -958,6 +1018,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
             `;
             tbody.appendChild(tr);
+        });
+    }
+
+    const searchCustomerInput = document.getElementById('search-customer-input');
+    if (searchCustomerInput) {
+        searchCustomerInput.addEventListener('input', () => {
+            renderCustomersTable();
         });
     }
 
