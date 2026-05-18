@@ -1,0 +1,780 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>งานของฉัน (My Tasks) - Sale View</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            font-size: 13px;
+        }
+        .header-title {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .user-profile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #3498db;
+        }
+        .user-profile .user-info h4 {
+            margin: 0;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        .user-profile .user-info p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        /* Dashboard Cards */
+        .dash-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid #ddd;
+            transition: transform 0.2s;
+        }
+        .dash-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .dash-card.primary { border-left-color: #3498db; }
+        .dash-card.success { border-left-color: #2ecc71; }
+        .dash-card.warning { border-left-color: #f39c12; }
+        .dash-card.danger { border-left-color: #e74c3c; }
+        .dash-card.gray { border-left-color: #7f8c8d; }
+        
+        .dash-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+        .dash-info h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .dash-icon {
+            font-size: 32px;
+            color: #bdc3c7;
+            opacity: 0.5;
+        }
+        .dash-card.primary .dash-icon { color: #3498db; }
+        .dash-card.success .dash-icon { color: #2ecc71; }
+        .dash-card.warning .dash-icon { color: #f39c12; }
+        .dash-card.danger .dash-icon { color: #e74c3c; }
+        .dash-card.gray .dash-icon { color: #7f8c8d; }
+
+        /* Main Content Area */
+        .content-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid #ddd;
+        }
+        .nav-tabs > li > a {
+            color: #7f8c8d;
+            border-radius: 0;
+            margin-right: 2px;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 400;
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+        .nav-tabs > li > a:hover {
+            background-color: transparent;
+            border-bottom: 2px solid #95a5a6;
+            color: #34495e;
+        }
+        .nav-tabs > li > a.active, 
+        .nav-tabs > li > a.active:hover, 
+        .nav-tabs > li > a.active:focus {
+            color: #2980b9;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #2980b9;
+            font-weight: 500;
+        }
+        .tab-content {
+            padding-top: 20px;
+        }
+
+        /* Colors & Badges */
+        .badge-new { background-color: #2ecc71; }
+        .badge-follow { background-color: #f39c12; }
+        .badge-walkin { background-color: #7f8c8d; }
+        .badge-appoint { background-color: #3498db; }
+        .badge-overdue { background-color: #e74c3c; }
+        
+        .badge {
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .label-type {
+            font-weight: 400;
+            padding: 3px 6px;
+            font-size: 11px;
+        }
+
+        /* Table Styles */
+        .table-sub {
+            background-color: #fff;
+            margin-bottom: 0;
+        }
+        .table-sub > thead > tr > th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0 !important;
+            padding: 14px 16px;
+            border-top: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .table-sub > tbody > tr > td {
+            font-size: 13px;
+            vertical-align: middle;
+            padding: 14px 16px;
+            border-top: 1px solid #f1f5f9;
+            color: #334155;
+            transition: background-color 0.2s ease;
+        }
+        .table-sub > tbody > tr:hover > td {
+            background-color: #f8fafc;
+        }
+        
+        .table-rounded-wrapper {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            background: #fff;
+        }
+        .table-rounded-wrapper .table {
+            margin-bottom: 0;
+            min-width: 800px;
+        }
+        .table-rounded-wrapper .table-sub {
+            border: 0;
+        }
+        .table-rounded-wrapper .table-sub > thead > tr > th,
+        .table-rounded-wrapper .table-sub > tbody > tr > td {
+            border: 1px solid #f1f5f9;
+        }
+        .table-rounded-wrapper .table-sub > thead > tr > th:first-child,
+        .table-rounded-wrapper .table-sub > tbody > tr > td:first-child { border-left: 0; }
+        .table-rounded-wrapper .table-sub > thead > tr > th:last-child,
+        .table-rounded-wrapper .table-sub > tbody > tr > td:last-child { border-right: 0; }
+        .table-rounded-wrapper .table-sub > thead > tr:first-child > th { border-top: 0; }
+        .table-rounded-wrapper .table-sub > tbody > tr:last-child > td { border-bottom: 0; }
+
+        /* Actions */
+        .btn-action {
+            padding: 3px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        .bulk-actions {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            padding-left: 30px;
+            border-radius: 20px;
+            height: 30px;
+            font-size: 12px;
+        }
+        .search-box i {
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            color: #95a5a6;
+        }
+
+        @media (max-width: 767px) {
+            .nav-tabs {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+            }
+            .nav-tabs > li {
+                float: none;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body class="bg-canvas text-dark min-vh-100 font-sans">
+    <!-- Left Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar bg-white border-end shadow-sm d-flex flex-column align-items-center font-thai">
+        <!-- Brand / Toggle -->
+        <div class="sidebar-header d-flex align-items-center justify-content-center w-100 position-relative py-3 border-bottom"
+            style="height: 68px;">
+            <a href="#"
+                class="text-decoration-none d-flex align-items-center justify-content-center w-100 brand-link overflow-hidden">
+                <div class="rounded bg-gradient-gold text-white fw-bold d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
+                    style="width: 36px; height: 36px;">S</div>
+                <span class="brand-text fs-5 fw-bold text-dark mb-0 ms-2">SPR Matrix</span>
+            </a>
+            <!-- Toggle Button -->
+            <button id="sidebar-toggle"
+                class="btn btn-white rounded-circle shadow-sm border toggle-btn position-absolute d-none d-md-flex align-items-center justify-content-center p-0"
+                style="right: -15px; width: 30px; height: 30px; z-index: 1040; background: #fff;">
+                <i class="bi bi-chevron-right text-secondary fs-6"></i>
+            </button>
+        </div>
+
+        <!-- Nav Links -->
+        <ul class="nav flex-column w-100 mt-3 sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="manage.html" title="Manage">
+                    <i class="bi bi-kanban-fill fs-5 nav-icon d-flex justify-content-center" style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">หน้าหลัก (Manage)</span><span
+                            class="text-en">Manage</span></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="mytask.html" title="My Task">
+                    <i class="bi bi-list-task fs-5 nav-icon d-flex justify-content-center" style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">งานของฉัน</span><span
+                            class="text-en">My Task</span></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-hover nav-view-btn d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="index.html" title="Unit Matrix">
+                    <i class="bi bi-grid-fill fs-5 nav-icon d-flex justify-content-center" style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">ผังห้องพัก</span><span
+                            class="text-en">Unit Matrix</span></span>
+                </a>
+            </li>
+            <li class="nav-item mt-2 pt-2 border-top border-secondary-subtle mx-3"></li>
+            <li class="nav-item">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="proposal.html" target="_blank" title="Proposal">
+                    <i class="bi bi-file-earmark-bar-graph-fill fs-5 nav-icon d-flex justify-content-center"
+                        style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">เอกสารสรุปแผนงาน</span><span
+                            class="text-en">Project Proposal</span></span>
+                </a>
+            </li>
+            <li class="nav-item mt-3 px-2">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 py-2 rounded text-secondary cursor-pointer"
+                    href="guide.html" target="_blank" title="User Guide Document">
+                    <i class="bi bi-book-half fs-5 nav-icon d-flex justify-content-center text-primary"
+                        style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">คู่มือการใช้งาน</span><span
+                            class="text-en">User Manual</span></span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Bottom Actions -->
+        <div
+            class="mt-auto w-100 pt-3 pb-4 d-flex flex-column align-items-center sidebar-bottom overflow-hidden border-top">
+            <!-- Language Toggle Full -->
+            <div class="btn-group shadow-sm lang-toggle-group mb-4 d-flex flex-shrink-0" role="group">
+                <button type="button" class="btn btn-sm btn-outline-secondary lang-btn active"
+                    data-lang="th">TH</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary lang-btn" data-lang="en">EN</button>
+            </div>
+
+            <!-- Language Toggle Mini (Only shows when collapsed) -->
+            <button class="btn btn-sm btn-outline-secondary fw-bold rounded shadow-sm lang-toggle-mini mb-4"
+                style="width: 36px; height: 36px;" title="Switch Language">TH</button>
+
+            <!-- User Profile -->
+            <div class="d-flex align-items-center justify-content-center user-profile w-100 px-3 cursor-pointer"
+                title="Siripoj S.">
+                <div class="rounded-circle border border-gold border-opacity-50 d-flex justify-content-center align-items-center text-gold fw-bold bg-white shadow-sm flex-shrink-0"
+                    style="width: 36px; height: 36px; font-size: 0.8rem;">
+                    SS
+                </div>
+                <div class="profile-text ms-3 text-start lh-sm" style="flex: 1; min-width: 0;">
+                    <div class="text-dark fw-bold small text-truncate">Siripoj S.</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">Sales Manager</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Header (Visible only on mobile) -->
+    <div class="d-flex d-md-none w-100 bg-white border-bottom shadow-sm align-items-center px-4 py-2 justify-content-between fixed-top"
+        style="height: 60px; z-index: 1020;">
+        <div class="d-flex align-items-center">
+            <div class="rounded bg-gradient-gold text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
+                style="width: 32px; height: 32px;">S</div>
+            <span class="fs-6 fw-bold font-thai text-dark mb-0 ms-2">SPR Matrix</span>
+        </div>
+        <button class="btn btn-light border shadow-sm" id="mobile-sidebar-toggle">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <main class="container-fluid px-2 px-md-4 pt-3 pb-5" style="margin-top: 1.5rem;" id="app-main-container">
+    <div class="row">
+        <div class="col-md-12">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="header-title"><i class="fa fa-tasks"></i> <span class="text-th">งานของฉัน (My Tasks)</span><span class="text-en">My Tasks</span></h3>
+            </div>
+
+            <!-- Project Filter -->
+            <div class="row" style="margin-bottom: 20px;">
+                <div class="col-md-4 col-sm-6">
+                    <label style="color: #7f8c8d; font-weight: normal; margin-bottom: 5px;"><span class="text-th">เลือกโครงการที่รับผิดชอบ:</span><span class="text-en">Select Responsible Project:</span></label>
+                    <select class="form-control">
+                        <option value="all">ทั้งหมด (All Projects)</option>
+                        <option value="1">คอนโด พญาไท</option>
+                        <option value="2">บ้านเดี่ยว รังสิต</option>
+                        <option value="3">ทาวน์โฮม สุขุมวิท</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Dashboard Cards -->
+            <div class="row">
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                    <div class="dash-card success" style="padding: 15px;">
+                        <div class="dash-info">
+                            <h4 style="font-size: 12px;">New Lead</h4>
+                            <h2 style="font-size: 24px;">3</h2>
+                        </div>
+                        <div class="dash-icon" style="font-size: 24px;"><i class="fa fa-star"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                    <div class="dash-card warning" style="padding: 15px;">
+                        <div class="dash-info">
+                            <h4 style="font-size: 12px;">Follow</h4>
+                            <h2 style="font-size: 24px;">2</h2>
+                        </div>
+                        <div class="dash-icon" style="font-size: 24px;"><i class="fa fa-refresh"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                    <div class="dash-card gray" style="padding: 15px;">
+                        <div class="dash-info">
+                            <h4 style="font-size: 12px;">Walk In</h4>
+                            <h2 style="font-size: 24px;">1</h2>
+                        </div>
+                        <div class="dash-icon" style="font-size: 24px;"><i class="fa fa-street-view"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                    <div class="dash-card primary" style="padding: 15px;">
+                        <div class="dash-info">
+                            <h4 style="font-size: 12px;">Appoint</h4>
+                            <h2 style="font-size: 24px;">0</h2>
+                        </div>
+                        <div class="dash-icon" style="font-size: 24px;"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-8 col-xs-12">
+                    <div class="dash-card danger" style="padding: 15px;">
+                        <div class="dash-info">
+                            <h4 style="font-size: 12px;">Overdue</h4>
+                            <h2 style="font-size: 24px;">1</h2>
+                        </div>
+                        <div class="dash-icon" style="font-size: 24px;"><i class="fa fa-exclamation-circle"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Content Area -->
+            <div class="content-card">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#new" aria-controls="new" role="tab" data-bs-toggle="tab"><i class="fa fa-star text-success"></i> New Lead <span class="badge badge-new">3</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#follow" aria-controls="follow" role="tab" data-bs-toggle="tab"><i class="fa fa-refresh text-warning"></i> Follow <span class="badge badge-follow">2</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#walkin" aria-controls="walkin" role="tab" data-bs-toggle="tab"><i class="fa fa-street-view" style="color:#7f8c8d;"></i> Walk In <span class="badge badge-walkin">1</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#appoint" aria-controls="appoint" role="tab" data-bs-toggle="tab"><i class="fa fa-calendar text-info"></i> Appoint <span class="badge badge-appoint" style="background-color: #bdc3c7;">0</span></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#overdue" aria-controls="overdue" role="tab" data-bs-toggle="tab"><i class="fa fa-exclamation-circle text-danger"></i> Overdue <span class="badge badge-overdue">1</span></a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <!-- New Lead Tab -->
+                    <div role="tabpanel" class="tab-pane fade show active" id="new">
+                        <!-- Filter Actions removed -->
+                        <div class="table-responsive table-rounded-wrapper">
+                            <table class="table table-sub">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อ-นามสกุลลูกค้า</th>
+                                        <th>เบอร์โทร</th>
+                                        <th>ช่องทาง</th>
+                                        <th>ประเภท</th>
+                                        <th>วันที่ติดต่อ</th>
+                                        <th>DueDate</th>
+                                        <th width="15%" class="text-center">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>นาย กิตติ ประเสริฐ</strong></td>
+                                        <td>081-234-5678</td>
+                                        <td><i class="fa fa-facebook-square text-primary"></i> Facebook</td>
+                                        <td><span class="label label-primary label-type">Inbound</span></td>
+                                        <td>10/05/2026</td>
+                                        <td>12/05/2026</td>
+                                        <td class="text-center" style="white-space: nowrap;">
+                                            <button class="btn btn-info btn-action" title="แสดงรายละเอียด" data-bs-toggle="modal" data-bs-target="#customerDetailModal"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-success btn-action" title="เพิ่มข้อมูลการติดต่อ" data-bs-toggle="modal" data-bs-target="#addContactModal"><i class="fa fa-phone"></i></button>
+                                            <button class="btn btn-warning btn-action" title="เพิ่มข้อมูลการนัดหมาย" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fa fa-calendar-plus-o"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>นางสาว วิภาภรณ์ แสนสุข</strong></td>
+                                        <td>089-876-5432</td>
+                                        <td><i class="fa fa-globe text-success"></i> WebSite</td>
+                                        <td><span class="label label-info label-type">Register</span></td>
+                                        <td>09/05/2026</td>
+                                        <td>11/05/2026</td>
+                                        <td class="text-center" style="white-space: nowrap;">
+                                            <button class="btn btn-info btn-action" title="แสดงรายละเอียด" data-bs-toggle="modal" data-bs-target="#customerDetailModal"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-success btn-action" title="เพิ่มข้อมูลการติดต่อ" data-bs-toggle="modal" data-bs-target="#addContactModal"><i class="fa fa-phone"></i></button>
+                                            <button class="btn btn-warning btn-action" title="เพิ่มข้อมูลการนัดหมาย" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fa fa-calendar-plus-o"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>คุณ อานนท์ รักษา</strong></td>
+                                        <td>082-111-2222</td>
+                                        <td><i class="fa fa-comment text-success"></i> Line</td>
+                                        <td><span class="label label-primary label-type">Inbound</span></td>
+                                        <td>10/05/2026</td>
+                                        <td>13/05/2026</td>
+                                        <td class="text-center" style="white-space: nowrap;">
+                                            <button class="btn btn-info btn-action" title="แสดงรายละเอียด" data-bs-toggle="modal" data-bs-target="#customerDetailModal"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-success btn-action" title="เพิ่มข้อมูลการติดต่อ" data-bs-toggle="modal" data-bs-target="#addContactModal"><i class="fa fa-phone"></i></button>
+                                            <button class="btn btn-warning btn-action" title="เพิ่มข้อมูลการนัดหมาย" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fa fa-calendar-plus-o"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Follow Tab -->
+                    <div role="tabpanel" class="tab-pane fade" id="follow">
+                        <!-- Filter Actions removed -->
+                        <div class="table-responsive table-rounded-wrapper">
+                            <table class="table table-sub">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อ-นามสกุลลูกค้า</th>
+                                        <th>เบอร์โทร</th>
+                                        <th>ช่องทาง</th>
+                                        <th>ประเภท</th>
+                                        <th>วันที่ติดต่อ</th>
+                                        <th>DueDate</th>
+                                        <th width="15%" class="text-center">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>คุณ มานะ พยายาม</strong></td>
+                                        <td>083-444-5555</td>
+                                        <td><i class="fa fa-globe text-success"></i> WebSite</td>
+                                        <td><span class="label label-info label-type">Register</span></td>
+                                        <td>05/05/2026</td>
+                                        <td>10/05/2026</td>
+                                        <td class="text-center" style="white-space: nowrap;">
+                                            <button class="btn btn-info btn-action" title="แสดงรายละเอียด" data-bs-toggle="modal" data-bs-target="#customerDetailModal"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-success btn-action" title="เพิ่มข้อมูลการติดต่อ" data-bs-toggle="modal" data-bs-target="#addContactModal"><i class="fa fa-phone"></i></button>
+                                            <button class="btn btn-warning btn-action" title="เพิ่มข้อมูลการนัดหมาย" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fa fa-calendar-plus-o"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>นาย ธนาคาร มั่นคง</strong></td>
+                                        <td>085-666-7777</td>
+                                        <td><i class="fa fa-facebook-square text-primary"></i> Facebook</td>
+                                        <td><span class="label label-warning label-type">Outbound</span></td>
+                                        <td>06/05/2026</td>
+                                        <td>11/05/2026</td>
+                                        <td class="text-center" style="white-space: nowrap;">
+                                            <button class="btn btn-info btn-action" title="แสดงรายละเอียด" data-bs-toggle="modal" data-bs-target="#customerDetailModal"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-success btn-action" title="เพิ่มข้อมูลการติดต่อ" data-bs-toggle="modal" data-bs-target="#addContactModal"><i class="fa fa-phone"></i></button>
+                                            <button class="btn btn-warning btn-action" title="เพิ่มข้อมูลการนัดหมาย" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fa fa-calendar-plus-o"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Walk In Tab -->
+                    <div role="tabpanel" class="tab-pane fade" id="walkin">
+                        <!-- Filter Actions removed -->
+                        <div class="table-responsive table-rounded-wrapper">
+                            <table class="table table-sub">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อ-นามสกุลลูกค้า</th>
+                                        <th>เบอร์โทร</th>
+                                        <th>โครงการที่สนใจ</th>
+                                        <th>วันที่เข้าชม</th>
+                                        <th>สถานะ</th>
+                                        <th width="15%" class="text-center">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>นาง บุญรอด ปลอดภัย</strong></td>
+                                        <td>080-112-2233</td>
+                                        <td>คอนโด พญาไท</td>
+                                        <td>09/05/2026</td>
+                                        <td><span class="label label-success label-type">Hot</span></td>
+                                        <td class="text-center" style="white-space: nowrap;">
+                                            <button class="btn btn-info btn-action" title="แสดงรายละเอียด" data-bs-toggle="modal" data-bs-target="#customerDetailModal"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-success btn-action" title="เพิ่มข้อมูลการติดต่อ" data-bs-toggle="modal" data-bs-target="#addContactModal"><i class="fa fa-phone"></i></button>
+                                            <button class="btn btn-warning btn-action" title="เพิ่มข้อมูลการนัดหมาย" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fa fa-calendar-plus-o"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Appoint Tab -->
+                    <div role="tabpanel" class="tab-pane fade" id="appoint">
+                        <div class="alert alert-info text-center" style="margin-bottom: 0; font-size: 14px; border-radius: 8px; padding: 30px;">
+                            <i class="fa fa-calendar-times-o" style="font-size: 30px; margin-bottom: 10px; display: block;"></i>
+                            ไม่มีรายการนัดหมายในขณะนี้
+                        </div>
+                    </div>
+                    
+                    <!-- Overdue Tab -->
+                    <div role="tabpanel" class="tab-pane fade" id="overdue">
+                        <!-- Filter Actions removed -->
+                        <div class="table-responsive table-rounded-wrapper">
+                            <table class="table table-sub">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อ-นามสกุลลูกค้า</th>
+                                        <th>เบอร์โทร</th>
+                                        <th>ช่องทาง</th>
+                                        <th>ประเภท</th>
+                                        <th>วันที่ติดต่อ</th>
+                                        <th>DueDate</th>
+                                        <th width="15%" class="text-center">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-danger"><strong>คุณ วาสนา ดีเลิศ</strong></td>
+                                        <td>088-999-0000</td>
+                                        <td><i class="fa fa-comment text-success"></i> Line</td>
+                                        <td><span class="label label-primary label-type">Inbound</span></td>
+                                        <td>01/05/2026</td>
+                                        <td class="text-danger"><strong>05/05/2026</strong></td>
+                                        <td class="text-center" style="white-space: nowrap;">
+                                            <button class="btn btn-info btn-action" title="แสดงรายละเอียด" data-bs-toggle="modal" data-bs-target="#customerDetailModal"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-success btn-action" title="เพิ่มข้อมูลการติดต่อ" data-bs-toggle="modal" data-bs-target="#addContactModal"><i class="fa fa-phone"></i></button>
+                                            <button class="btn btn-warning btn-action" title="เพิ่มข้อมูลการนัดหมาย" data-bs-toggle="modal" data-bs-target="#addAppointmentModal"><i class="fa fa-calendar-plus-o"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal แสดงรายละเอียดลูกค้า -->
+<div class="modal fade" id="customerDetailModal" tabindex="-1" role="dialog" aria-labelledby="customerDetailModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="border-radius: 8px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="customerDetailModalLabel" style="font-size: 16px;"><i class="fa fa-user"></i> รายละเอียดลูกค้า</h4>
+      </div>
+      <div class="modal-body" style="font-size: 13px;">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>ชื่อ-นามสกุล:</strong> <span class="text-primary">นาย กิตติ ประเสริฐ</span></p>
+                <p><strong>เบอร์โทรศัพท์:</strong> 081-234-5678</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>ช่องทางการติดต่อ:</strong> Facebook</p>
+                <p><strong>วันที่ติดต่อ:</strong> 10/05/2026</p>
+            </div>
+        </div>
+        <hr style="margin-top: 10px; margin-bottom: 15px;">
+        <p><strong>ประวัติการสนทนาล่าสุด:</strong> ลูกค้าสนใจโครงการ พญาไท อยากเข้ามาดูห้องตัวอย่างในสัปดาห์หน้า</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">ปิด</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal เพิ่มข้อมูลการติดต่อ -->
+<div class="modal fade" id="addContactModal" tabindex="-1" role="dialog" aria-labelledby="addContactModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="border-radius: 8px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addContactModalLabel" style="font-size: 16px;"><i class="fa fa-plus-circle"></i> เพิ่มข้อมูลการติดต่อ / อัพเดทสถานะ</h4>
+      </div>
+      <div class="modal-body" style="font-size: 13px;">
+        <form>
+            <div class="form-group">
+                <label>วันที่ติดต่อ:</label>
+                <input type="date" class="form-control input-sm" value="2026-05-16">
+            </div>
+            <div class="form-group">
+                <label>ช่องทางการติดต่อ:</label>
+                <select class="form-control input-sm">
+                    <option>โทรศัพท์</option>
+                    <option>Line</option>
+                    <option>Facebook</option>
+                    <option>Walk In (เข้าชมโครงการ)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>อัพเดทสถานะลูกค้า:</label>
+                <select class="form-control input-sm">
+                    <option>New Lead</option>
+                    <option selected>Follow</option>
+                    <option>Appoint (นัดหมาย)</option>
+                    <option>Lost (ปิดการขายไม่ได้)</option>
+                    <option>Won (จอง/ทำสัญญา)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>รายละเอียดการสนทนา:</label>
+                <textarea class="form-control input-sm" rows="3" placeholder="ระบุรายละเอียดการพูดคุยกับลูกค้า..."></textarea>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="alert('บันทึกข้อมูลสำเร็จ')"><i class="fa fa-save"></i> บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal เพิ่มข้อมูลการนัดหมาย -->
+<div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addAppointmentModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="border-radius: 8px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addAppointmentModalLabel" style="font-size: 16px;"><i class="fa fa-calendar-plus-o"></i> เพิ่มข้อมูลการนัดหมาย</h4>
+      </div>
+      <div class="modal-body" style="font-size: 13px;">
+        <form>
+            <div class="form-group">
+                <label>วันและเวลานัดหมาย:</label>
+                <input type="datetime-local" class="form-control input-sm">
+            </div>
+            <div class="form-group">
+                <label>ประเภทการนัดหมาย:</label>
+                <select class="form-control input-sm">
+                    <option>เยี่ยมชมโครงการ</option>
+                    <option>จอง</option>
+                    <option>ทำสัญญา</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>รายละเอียดเพิ่มเติม:</label>
+                <textarea class="form-control input-sm" rows="3" placeholder="ระบุรายละเอียด..."></textarea>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal" onclick="alert('บันทึกนัดหมายสำเร็จ')"><i class="fa fa-save"></i> บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+<script>
+    $(document).ready(function() {
+        // Select All Checkbox logic
+        $(document).on('change', '.check-all', function() {
+            var table = $(this).closest('table');
+            table.find('.check-item').prop('checked', $(this).prop('checked'));
+        });
+
+        // Individual Checkbox logic
+        $(document).on('change', '.check-item', function() {
+            var table = $(this).closest('table');
+            var allChecked = table.find('.check-item:not(:checked)').length === 0;
+            table.find('.check-all').prop('checked', allChecked);
+        });
+    });
+</script>
+
+</body>
+</html>
+

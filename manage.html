@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานสรุปการติดตามลูกค้า (Head Sale View)</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            font-size: 13px; /* Reduced font size */
+        }
+        .header-title {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 20px; /* Reduced header size */
+        }
+        .summary-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+        .table-main {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table-main > thead > tr > th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            padding: 14px 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef !important;
+            border-top: none;
+        }
+        .table-main > tbody > tr.sale-row {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .table-main > tbody > tr.sale-row > td {
+            vertical-align: middle;
+            padding: 16px;
+            border-top: 1px solid #f1f3f5;
+            color: #343a40;
+        }
+        .table-main > tbody > tr.sale-row:hover {
+            background-color: #f8f9fa;
+            box-shadow: inset 3px 0 0 #d4af37; /* Gold accent */
+        }
+        .expand-icon {
+            transition: transform 0.3s;
+            color: #7f8c8d;
+        }
+        .sale-row[aria-expanded="true"] .expand-icon {
+            transform: rotate(180deg);
+            color: #2980b9;
+        }
+        .hidden-row {
+            padding: 0 !important;
+            border: none !important;
+        }
+        .collapse-wrapper {
+            padding: 15px;
+            background-color: #fcfcfc;
+            border: 1px solid #eee;
+            border-top: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            margin-bottom: 10px;
+        }
+        /* Nav Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid #ddd;
+        }
+        .nav-tabs > li > a {
+            color: #7f8c8d;
+            border-radius: 0;
+            margin-right: 2px;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 400;
+            padding: 8px 12px;
+        }
+        .nav-tabs > li > a:hover {
+            background-color: transparent;
+            border-bottom: 2px solid #95a5a6;
+            color: #34495e;
+        }
+        .nav-tabs > li > a.active, 
+        .nav-tabs > li > a.active:hover, 
+        .nav-tabs > li > a.active:focus {
+            color: #2980b9;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #2980b9;
+            font-weight: 500;
+        }
+        .tab-content {
+            padding-top: 15px;
+        }
+        /* Sub table */
+        .table-sub {
+            background-color: #fff;
+            margin-bottom: 0;
+        }
+        .table-sub > thead > tr > th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0 !important;
+            padding: 12px 16px;
+            border-top: none;
+        }
+        .table-sub > tbody > tr > td {
+            font-size: 12px;
+            vertical-align: middle;
+            padding: 12px 16px;
+            border-top: 1px solid #f1f5f9;
+            color: #334155;
+            transition: background-color 0.2s ease;
+        }
+        .table-sub > tbody > tr:hover > td {
+            background-color: #f8fafc;
+        }
+        
+        /* Table Rounded Wrapper */
+        .table-rounded-wrapper {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            background: #fff;
+        }
+        .table-rounded-wrapper .table {
+            margin-bottom: 0;
+            min-width: 800px;
+        }
+        .table-rounded-wrapper .table-sub {
+            border: 0;
+        }
+        .table-rounded-wrapper .table-sub > thead > tr > th,
+        .table-rounded-wrapper .table-sub > tbody > tr > td {
+            border: 1px solid #f1f5f9;
+        }
+        .table-rounded-wrapper .table-sub > thead > tr > th:first-child,
+        .table-rounded-wrapper .table-sub > tbody > tr > td:first-child {
+            border-left: 0;
+        }
+        .table-rounded-wrapper .table-sub > thead > tr > th:last-child,
+        .table-rounded-wrapper .table-sub > tbody > tr > td:last-child {
+            border-right: 0;
+        }
+        .table-rounded-wrapper .table-sub > thead > tr:first-child > th {
+            border-top: 0;
+        }
+        .table-rounded-wrapper .table-sub > tbody > tr:last-child > td {
+            border-bottom: 0;
+        }
+
+        /* Colors & Badges */
+        .badge-new { background-color: #2ecc71; } /* Green */
+        .badge-follow { background-color: #f39c12; }
+        .badge-walkin { background-color: #7f8c8d; } /* Gray */
+        .badge-appoint { background-color: #3498db; }
+        .badge-overdue { background-color: #e74c3c; }
+        
+        .badge {
+            font-weight: 400;
+            font-size: 11px;
+        }
+
+        /* Stats - Circular */
+        .stat-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%; /* Circle */
+            font-weight: 500;
+            color: white;
+            font-size: 12px;
+            margin: 0 auto;
+        }
+        
+        .label-type {
+            font-weight: 400;
+            padding: 2px 5px;
+            font-size: 10px;
+        }
+        
+        /* Action Buttons */
+        .btn-assign {
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+        }
+        
+        .bulk-actions {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Dashboard Cards */
+        .dash-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid #ddd;
+            transition: transform 0.2s;
+        }
+        .dash-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .dash-card.primary { border-left-color: #3498db; }
+        .dash-card.success { border-left-color: #2ecc71; }
+        .dash-card.warning { border-left-color: #f39c12; }
+        .dash-card.danger { border-left-color: #e74c3c; }
+        
+        .dash-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+        .dash-info h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .dash-icon {
+            font-size: 32px;
+            color: #bdc3c7;
+            opacity: 0.5;
+        }
+        .dash-card.primary .dash-icon { color: #3498db; }
+        .dash-card.success .dash-icon { color: #2ecc71; }
+        .dash-card.warning .dash-icon { color: #f39c12; }
+        .dash-card.danger .dash-icon { color: #e74c3c; }
+        
+        /* Chart Card */
+        .chart-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #34495e;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .nav-tabs {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+            }
+            .nav-tabs > li {
+                float: none;
+                display: inline-block;
+            }
+            .header-title {
+                font-size: 16px;
+            }
+            .stat-box {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-canvas text-dark min-vh-100 font-sans">
+    <!-- Left Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar bg-white border-end shadow-sm d-flex flex-column align-items-center font-thai">
+        <!-- Brand / Toggle -->
+        <div class="sidebar-header d-flex align-items-center justify-content-center w-100 position-relative py-3 border-bottom"
+            style="height: 68px;">
+            <a href="#"
+                class="text-decoration-none d-flex align-items-center justify-content-center w-100 brand-link overflow-hidden">
+                <div class="rounded bg-gradient-gold text-white fw-bold d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
+                    style="width: 36px; height: 36px;">S</div>
+                <span class="brand-text fs-5 fw-bold text-dark mb-0 ms-2">SPR Matrix</span>
+            </a>
+            <!-- Toggle Button -->
+            <button id="sidebar-toggle"
+                class="btn btn-white rounded-circle shadow-sm border toggle-btn position-absolute d-none d-md-flex align-items-center justify-content-center p-0"
+                style="right: -15px; width: 30px; height: 30px; z-index: 1040; background: #fff;">
+                <i class="bi bi-chevron-right text-secondary fs-6"></i>
+            </button>
+        </div>
+
+        <!-- Nav Links -->
+        <ul class="nav flex-column w-100 mt-3 sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="manage.html" title="Manage">
+                    <i class="bi bi-kanban-fill fs-5 nav-icon d-flex justify-content-center" style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">หน้าหลัก (Manage)</span><span
+                            class="text-en">Manage</span></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="mytask.html" title="My Task">
+                    <i class="bi bi-list-task fs-5 nav-icon d-flex justify-content-center" style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">งานของฉัน</span><span
+                            class="text-en">My Task</span></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-hover nav-view-btn d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="index.html" title="Unit Matrix">
+                    <i class="bi bi-grid-fill fs-5 nav-icon d-flex justify-content-center" style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">ผังห้องพัก</span><span
+                            class="text-en">Unit Matrix</span></span>
+                </a>
+            </li>
+            <li class="nav-item mt-2 pt-2 border-top border-secondary-subtle mx-3"></li>
+            <li class="nav-item">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 mx-2 rounded mb-1 text-secondary"
+                    href="proposal.html" target="_blank" title="Proposal">
+                    <i class="bi bi-file-earmark-bar-graph-fill fs-5 nav-icon d-flex justify-content-center"
+                        style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">เอกสารสรุปแผนงาน</span><span
+                            class="text-en">Project Proposal</span></span>
+                </a>
+            </li>
+            <li class="nav-item mt-3 px-2">
+                <a class="nav-link nav-hover d-flex align-items-center px-3 py-2 rounded text-secondary cursor-pointer"
+                    href="guide.html" target="_blank" title="User Guide Document">
+                    <i class="bi bi-book-half fs-5 nav-icon d-flex justify-content-center text-primary"
+                        style="width: 24px;"></i>
+                    <span class="nav-text ms-3 text-nowrap"><span class="text-th">คู่มือการใช้งาน</span><span
+                            class="text-en">User Manual</span></span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Bottom Actions -->
+        <div
+            class="mt-auto w-100 pt-3 pb-4 d-flex flex-column align-items-center sidebar-bottom overflow-hidden border-top">
+            <!-- Language Toggle Full -->
+            <div class="btn-group shadow-sm lang-toggle-group mb-4 d-flex flex-shrink-0" role="group">
+                <button type="button" class="btn btn-sm btn-outline-secondary lang-btn active"
+                    data-lang="th">TH</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary lang-btn" data-lang="en">EN</button>
+            </div>
+
+            <!-- Language Toggle Mini (Only shows when collapsed) -->
+            <button class="btn btn-sm btn-outline-secondary fw-bold rounded shadow-sm lang-toggle-mini mb-4"
+                style="width: 36px; height: 36px;" title="Switch Language">TH</button>
+
+            <!-- User Profile -->
+            <div class="d-flex align-items-center justify-content-center user-profile w-100 px-3 cursor-pointer"
+                title="Siripoj S.">
+                <div class="rounded-circle border border-gold border-opacity-50 d-flex justify-content-center align-items-center text-gold fw-bold bg-white shadow-sm flex-shrink-0"
+                    style="width: 36px; height: 36px; font-size: 0.8rem;">
+                    SS
+                </div>
+                <div class="profile-text ms-3 text-start lh-sm" style="flex: 1; min-width: 0;">
+                    <div class="text-dark fw-bold small text-truncate">Siripoj S.</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">Sales Manager</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Header (Visible only on mobile) -->
+    <div class="d-flex d-md-none w-100 bg-white border-bottom shadow-sm align-items-center px-4 py-2 justify-content-between fixed-top"
+        style="height: 60px; z-index: 1020;">
+        <div class="d-flex align-items-center">
+            <div class="rounded bg-gradient-gold text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
+                style="width: 32px; height: 32px;">S</div>
+            <span class="fs-6 fw-bold font-thai text-dark mb-0 ms-2">SPR Matrix</span>
+        </div>
+        <button class="btn btn-light border shadow-sm" id="mobile-sidebar-toggle">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <main class="container-fluid px-2 px-md-4 pt-3 pb-5" style="margin-top: 1.5rem;" id="app-main-container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="header-title"><i class="fa fa-line-chart"></i> <span class="text-th">รายงานสรุปการติดตามลูกค้า (Head Sale View)</span><span class="text-en">Customer Follow-up Summary Report (Head Sale View)</span></h3>
+            
+            <!-- Project Filter -->
+            <div class="row" style="margin-bottom: 20px;">
+                <div class="col-md-4 col-sm-6">
+                    <label style="color: #7f8c8d; font-weight: normal; margin-bottom: 5px;">เลือกโครงการที่ต้องการดูข้อมูล:</label>
+                    <select class="form-control">
+                        <option value="all">ทั้งหมด (All Projects)</option>
+                        <option value="1">คอนโด พญาไท</option>
+                        <option value="2">บ้านเดี่ยว รังสิต</option>
+                        <option value="3">ทาวน์โฮม สุขุมวิท</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="dash-card primary">
+                        <div class="dash-info">
+                            <h4>งานทั้งหมด (Total)</h4>
+                            <h2>10</h2>
+                        </div>
+                        <div class="dash-icon"><i class="fa fa-briefcase"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="dash-card success">
+                        <div class="dash-info">
+                            <h4>New Lead</h4>
+                            <h2>4</h2>
+                        </div>
+                        <div class="dash-icon"><i class="fa fa-star"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="dash-card warning">
+                        <div class="dash-info">
+                            <h4>Follow</h4>
+                            <h2>3</h2>
+                        </div>
+                        <div class="dash-icon"><i class="fa fa-refresh"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="dash-card danger">
+                        <div class="dash-info">
+                            <h4>Overdue</h4>
+                            <h2>1</h2>
+                        </div>
+                        <div class="dash-icon"><i class="fa fa-exclamation-circle"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <div class="chart-title"><i class="fa fa-pie-chart"></i> <span class="text-th">สัดส่วนสถานะงาน</span><span class="text-en">Task Status Ratio</span></div>
+                        <div style="height: 220px;"><canvas id="doughnutChart"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="chart-card">
+                        <div class="chart-title"><i class="fa fa-bar-chart"></i> <span class="text-th">ประสิทธิภาพพนักงานขาย</span><span class="text-en">Sale Performance</span></div>
+                        <div style="height: 220px;"><canvas id="barChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="chart-title" style="border:none; margin-bottom:5px;"><i class="fa fa-list"></i> <span class="text-th">รายละเอียดงานรายบุคคล</span><span class="text-en">Individual Task Details</span></div>
+                <table class="table table-main">
+                    <thead>
+                        <tr>
+                            <th width="3%" class="text-center">#</th>
+                            <th width="22%">ชื่อพนักงานขาย (Sale Name)</th>
+                            <th width="15%" class="text-center">New Lead</th>
+                            <th width="15%" class="text-center">Follow</th>
+                            <th width="15%" class="text-center">Walk In</th>
+                            <th width="15%" class="text-center">Appoint</th>
+                            <th width="15%" class="text-center">Overdue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sale Person 1 -->
+                        <tr class="sale-row" data-bs-toggle="collapse" data-bs-target="#collapseSale1" aria-expanded="false">
+                            <td class="text-center"><i class="fa fa-chevron-down expand-icon"></i></td>
+                            <td><strong>สมชาย ใจดี</strong></td>
+                            <td class="text-center"><div class="stat-box badge-new">3</div></td>
+                            <td class="text-center"><div class="stat-box badge-follow">2</div></td>
+                            <td class="text-center"><div class="stat-box badge-walkin">1</div></td>
+                            <td class="text-center"><div class="stat-box badge-appoint">0</div></td>
+                            <td class="text-center"><div class="stat-box badge-overdue">1</div></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" class="hidden-row">
+                                <div id="collapseSale1" class="collapse">
+                                    <div class="collapse-wrapper">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="nav-item" role="presentation"><a class="nav-link active" href="#new1" aria-controls="new1" role="tab" data-bs-toggle="tab"><i class="fa fa-star text-success"></i> New Lead <span class="badge badge-new">3</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#follow1" aria-controls="follow1" role="tab" data-bs-toggle="tab"><i class="fa fa-refresh text-warning"></i> Follow <span class="badge badge-follow">2</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#walkin1" aria-controls="walkin1" role="tab" data-bs-toggle="tab"><i class="fa fa-street-view" style="color:#7f8c8d;"></i> Walk In <span class="badge badge-walkin">1</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#appoint1" aria-controls="appoint1" role="tab" data-bs-toggle="tab"><i class="fa fa-calendar text-info"></i> Appoint <span class="badge badge-appoint">0</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#overdue1" aria-controls="overdue1" role="tab" data-bs-toggle="tab"><i class="fa fa-exclamation-circle text-danger"></i> Overdue <span class="badge badge-overdue">1</span></a></li>
+                                        </ul>
+
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <!-- New Lead Tab -->
+                                            <div role="tabpanel" class="tab-pane fade show active" id="new1">
+                                                <div class="bulk-actions">
+                                                    <button class="btn btn-primary btn-sm btn-bulk-assign" data-bs-toggle="modal" data-bs-target="#assignModal"><i class="fa fa-exchange"></i> Assign ที่เลือก</button>
+                                                </div>
+                                                <table class="table table-sub">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%" class="text-center"><input type="checkbox" class="check-all"></th>
+                                                            <th>ชื่อ-นามสกุลลูกค้า</th>
+                                                            <th>เบอร์โทร</th>
+                                                            <th>ช่องทาง</th>
+                                                            <th>ประเภท</th>
+                                                            <th>วันที่ติดต่อ</th>
+                                                            <th>DueDate</th>
+                                                            <th width="10%" class="text-center">จัดการ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="นาย กิตติ ประเสริฐ"></td>
+                                                            <td>นาย กิตติ ประเสริฐ</td>
+                                                            <td>081-234-5678</td>
+                                                            <td><i class="fa fa-facebook-square text-primary"></i> Facebook</td>
+                                                            <td><span class="label label-primary label-type">Inbound</span></td>
+                                                            <td>10/05/2026</td>
+                                                            <td>12/05/2026</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="นาย กิตติ ประเสริฐ"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="นางสาว วิภาภรณ์ แสนสุข"></td>
+                                                            <td>นางสาว วิภาภรณ์ แสนสุข</td>
+                                                            <td>089-876-5432</td>
+                                                            <td><i class="fa fa-globe text-success"></i> WebSite</td>
+                                                            <td><span class="label label-info label-type">Register</span></td>
+                                                            <td>09/05/2026</td>
+                                                            <td>11/05/2026</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="นางสาว วิภาภรณ์ แสนสุข"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="คุณ อานนท์ รักษา"></td>
+                                                            <td>คุณ อานนท์ รักษา</td>
+                                                            <td>082-111-2222</td>
+                                                            <td><i class="fa fa-comment text-success"></i> Line</td>
+                                                            <td><span class="label label-primary label-type">Inbound</span></td>
+                                                            <td>10/05/2026</td>
+                                                            <td>13/05/2026</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="คุณ อานนท์ รักษา"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- Follow Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="follow1">
+                                                <div class="bulk-actions">
+                                                    <button class="btn btn-primary btn-sm btn-bulk-assign" data-bs-toggle="modal" data-bs-target="#assignModal"><i class="fa fa-exchange"></i> Assign ที่เลือก</button>
+                                                </div>
+                                                <table class="table table-sub">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%" class="text-center"><input type="checkbox" class="check-all"></th>
+                                                            <th>ชื่อ-นามสกุลลูกค้า</th>
+                                                            <th>เบอร์โทร</th>
+                                                            <th>ช่องทาง</th>
+                                                            <th>ประเภท</th>
+                                                            <th>วันที่ติดต่อ</th>
+                                                            <th>DueDate</th>
+                                                            <th width="10%" class="text-center">จัดการ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="คุณ มานะ พยายาม"></td>
+                                                            <td>คุณ มานะ พยายาม</td>
+                                                            <td>083-444-5555</td>
+                                                            <td><i class="fa fa-globe text-success"></i> WebSite</td>
+                                                            <td><span class="label label-info label-type">Register</span></td>
+                                                            <td>05/05/2026</td>
+                                                            <td>10/05/2026</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="คุณ มานะ พยายาม"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="นาย ธนาคาร มั่นคง"></td>
+                                                            <td>นาย ธนาคาร มั่นคง</td>
+                                                            <td>085-666-7777</td>
+                                                            <td><i class="fa fa-facebook-square text-primary"></i> Facebook</td>
+                                                            <td><span class="label label-warning label-type">Outbound</span></td>
+                                                            <td>06/05/2026</td>
+                                                            <td>11/05/2026</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="นาย ธนาคาร มั่นคง"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- Walk In Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="walkin1">
+                                                <div class="bulk-actions">
+                                                    <button class="btn btn-primary btn-sm btn-bulk-assign" data-bs-toggle="modal" data-bs-target="#assignModal"><i class="fa fa-exchange"></i> Assign ที่เลือก</button>
+                                                </div>
+                                                <table class="table table-sub">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%" class="text-center"><input type="checkbox" class="check-all"></th>
+                                                            <th>ชื่อ-นามสกุลลูกค้า</th>
+                                                            <th>เบอร์โทร</th>
+                                                            <th>โครงการที่สนใจ</th>
+                                                            <th>วันที่เข้าชม</th>
+                                                            <th>สถานะ</th>
+                                                            <th width="10%" class="text-center">จัดการ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="นาง บุญรอด ปลอดภัย"></td>
+                                                            <td>นาง บุญรอด ปลอดภัย</td>
+                                                            <td>080-112-2233</td>
+                                                            <td>คอนโด พญาไท</td>
+                                                            <td>09/05/2026</td>
+                                                            <td><span class="label label-success label-type">Hot</span></td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="นาง บุญรอด ปลอดภัย"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- Appoint Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="appoint1">
+                                                <div class="alert alert-info text-center" style="margin-bottom: 0; font-size: 12px; border-radius: 8px;">
+                                                    ไม่มีรายการนัดหมายในขณะนี้
+                                                </div>
+                                            </div>
+                                            <!-- Overdue Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="overdue1">
+                                                <div class="bulk-actions">
+                                                    <button class="btn btn-primary btn-sm btn-bulk-assign" data-bs-toggle="modal" data-bs-target="#assignModal"><i class="fa fa-exchange"></i> Assign ที่เลือก</button>
+                                                </div>
+                                                <table class="table table-sub">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%" class="text-center"><input type="checkbox" class="check-all"></th>
+                                                            <th>ชื่อ-นามสกุลลูกค้า</th>
+                                                            <th>เบอร์โทร</th>
+                                                            <th>ช่องทาง</th>
+                                                            <th>ประเภท</th>
+                                                            <th>วันที่ติดต่อ</th>
+                                                            <th>DueDate</th>
+                                                            <th width="10%" class="text-center">จัดการ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="คุณ วาสนา ดีเลิศ"></td>
+                                                            <td class="text-danger">คุณ วาสนา ดีเลิศ</td>
+                                                            <td>088-999-0000</td>
+                                                            <td><i class="fa fa-comment text-success"></i> Line</td>
+                                                            <td><span class="label label-primary label-type">Inbound</span></td>
+                                                            <td>01/05/2026</td>
+                                                            <td class="text-danger"><strong>05/05/2026</strong></td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="คุณ วาสนา ดีเลิศ"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        
+                        <!-- Sale Person 2 -->
+                        <tr class="sale-row" data-bs-toggle="collapse" data-bs-target="#collapseSale2" aria-expanded="false">
+                            <td class="text-center"><i class="fa fa-chevron-down expand-icon"></i></td>
+                            <td><strong>สมหญิง ขยันขาย</strong></td>
+                            <td class="text-center"><div class="stat-box badge-new">1</div></td>
+                            <td class="text-center"><div class="stat-box badge-follow">1</div></td>
+                            <td class="text-center"><div class="stat-box badge-walkin">0</div></td>
+                            <td class="text-center"><div class="stat-box badge-appoint">1</div></td>
+                            <td class="text-center"><div class="stat-box badge-overdue" style="background-color: #bdc3c7;">0</div></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" class="hidden-row">
+                                <div id="collapseSale2" class="collapse">
+                                    <div class="collapse-wrapper">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="nav-item" role="presentation"><a class="nav-link active" href="#new2" aria-controls="new2" role="tab" data-bs-toggle="tab"><i class="fa fa-star text-success"></i> New Lead <span class="badge badge-new">1</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#follow2" aria-controls="follow2" role="tab" data-bs-toggle="tab"><i class="fa fa-refresh text-warning"></i> Follow <span class="badge badge-follow">1</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#walkin2" aria-controls="walkin2" role="tab" data-bs-toggle="tab"><i class="fa fa-street-view" style="color:#7f8c8d;"></i> Walk In <span class="badge">0</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#appoint2" aria-controls="appoint2" role="tab" data-bs-toggle="tab"><i class="fa fa-calendar text-info"></i> Appoint <span class="badge badge-appoint">1</span></a></li>
+                                            <li class="nav-item" role="presentation"><a class="nav-link" href="#overdue2" aria-controls="overdue2" role="tab" data-bs-toggle="tab"><i class="fa fa-exclamation-circle text-danger"></i> Overdue <span class="badge">0</span></a></li>
+                                        </ul>
+
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <!-- New Lead Tab -->
+                                            <div role="tabpanel" class="tab-pane fade show active" id="new2">
+                                                <div class="bulk-actions">
+                                                    <button class="btn btn-primary btn-sm btn-bulk-assign" data-bs-toggle="modal" data-bs-target="#assignModal"><i class="fa fa-exchange"></i> Assign ที่เลือก</button>
+                                                </div>
+                                                <table class="table table-sub">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%" class="text-center"><input type="checkbox" class="check-all"></th>
+                                                            <th>ชื่อ-นามสกุลลูกค้า</th>
+                                                            <th>เบอร์โทร</th>
+                                                            <th>ช่องทาง</th>
+                                                            <th>ประเภท</th>
+                                                            <th>วันที่ติดต่อ</th>
+                                                            <th>DueDate</th>
+                                                            <th width="10%" class="text-center">จัดการ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="นาย ทรงพล กล้าหาญ"></td>
+                                                            <td>นาย ทรงพล กล้าหาญ</td>
+                                                            <td>091-222-3333</td>
+                                                            <td><i class="fa fa-globe text-success"></i> WebSite</td>
+                                                            <td><span class="label label-info label-type">Register</span></td>
+                                                            <td>10/05/2026</td>
+                                                            <td>14/05/2026</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="นาย ทรงพล กล้าหาญ"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- Follow Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="follow2">
+                                                <div class="bulk-actions">
+                                                    <button class="btn btn-primary btn-sm btn-bulk-assign" data-bs-toggle="modal" data-bs-target="#assignModal"><i class="fa fa-exchange"></i> Assign ที่เลือก</button>
+                                                </div>
+                                                <table class="table table-sub">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%" class="text-center"><input type="checkbox" class="check-all"></th>
+                                                            <th>ชื่อ-นามสกุลลูกค้า</th>
+                                                            <th>เบอร์โทร</th>
+                                                            <th>ช่องทาง</th>
+                                                            <th>ประเภท</th>
+                                                            <th>วันที่ติดต่อ</th>
+                                                            <th>DueDate</th>
+                                                            <th width="10%" class="text-center">จัดการ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="นาง จุไรพร ร่ำรวย"></td>
+                                                            <td>นาง จุไรพร ร่ำรวย</td>
+                                                            <td>086-555-8888</td>
+                                                            <td><i class="fa fa-comment text-success"></i> Line</td>
+                                                            <td><span class="label label-primary label-type">Inbound</span></td>
+                                                            <td>08/05/2026</td>
+                                                            <td>12/05/2026</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="นาง จุไรพร ร่ำรวย"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- Walk In Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="walkin2">
+                                                <div class="alert alert-info text-center" style="margin-bottom: 0; font-size: 12px; border-radius: 8px;">
+                                                    ไม่มีรายการ Walk In
+                                                </div>
+                                            </div>
+                                            <!-- Appoint Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="appoint2">
+                                                <div class="bulk-actions">
+                                                    <button class="btn btn-primary btn-sm btn-bulk-assign" data-bs-toggle="modal" data-bs-target="#assignModal"><i class="fa fa-exchange"></i> Assign ที่เลือก</button>
+                                                </div>
+                                                <table class="table table-sub">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%" class="text-center"><input type="checkbox" class="check-all"></th>
+                                                            <th>ชื่อ-นามสกุลลูกค้า</th>
+                                                            <th>เบอร์โทร</th>
+                                                            <th>โครงการ</th>
+                                                            <th>วันเวลานัดหมาย</th>
+                                                            <th>รายละเอียด</th>
+                                                            <th width="10%" class="text-center">จัดการ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center"><input type="checkbox" class="check-item" data-customer="นาย ภูดิท รักเรียน"></td>
+                                                            <td>นาย ภูดิท รักเรียน</td>
+                                                            <td>099-888-7777</td>
+                                                            <td>บ้านเดี่ยว รังสิต</td>
+                                                            <td>15/05/2026 13:00 น.</td>
+                                                            <td>ดูบ้านตัวอย่าง Type A</td>
+                                                            <td class="text-center"><button class="btn btn-light btn-assign" data-bs-toggle="modal" data-bs-target="#assignModal" data-customer="นาย ภูดิท รักเรียน"><i class="fa fa-exchange"></i> Assign</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- Overdue Tab -->
+                                            <div role="tabpanel" class="tab-pane fade" id="overdue2">
+                                                <div class="alert alert-success text-center" style="margin-bottom: 0; font-size: 12px; border-radius: 8px;">
+                                                    <i class="fa fa-check-circle"></i> เยี่ยมมาก! ไม่มีรายการติดตามที่เกินกำหนด
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal สำหรับ Assign งานให้ Sale ท่านอื่น -->
+<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content" style="border-radius: 8px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="assignModalLabel" style="font-size: 15px;"><i class="fa fa-exchange"></i> Assign งาน (โอนย้ายลูกค้า)</h4>
+      </div>
+      <div class="modal-body" style="font-size: 13px;">
+        <p>คุณกำลังจะมอบหมายลูกค้า: <br><strong id="assignCustomerName" class="text-primary"></strong></p>
+        <div class="form-group">
+            <label for="saleSelect">เลือกพนักงานขายท่านอื่น:</label>
+            <select class="form-control input-sm" id="saleSelect">
+                <option value="">-- กรุณาเลือก Sale --</option>
+                <option value="3">นายนพดล ขยันยิ่ง</option>
+                <option value="4">นางสาวอารยา สวยเสมอ</option>
+                <option value="5">นายเอกชัย ใจสู้</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="assignNote">หมายเหตุ (ถ้ามี):</label>
+            <textarea class="form-control input-sm" id="assignNote" rows="2" placeholder="เหตุผลที่ส่งต่อ..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnConfirmAssign" data-bs-dismiss="modal">ยืนยันการ Assign</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    $(document).ready(function() {
+        // Make tables responsive and beautiful
+        $('.table-main, .table-sub').wrap('<div class="table-responsive table-rounded-wrapper"></div>');
+
+        // Change icon when collapsed/expanded
+        $('.collapse').on('show.bs.collapse', function () {
+            $(this).parent().parent().prev('.sale-row').find('.expand-icon').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        }).on('hide.bs.collapse', function () {
+            $(this).parent().parent().prev('.sale-row').find('.expand-icon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+        
+        // Select All Checkbox logic
+        $(document).on('change', '.check-all', function() {
+            var table = $(this).closest('table');
+            table.find('.check-item').prop('checked', $(this).prop('checked'));
+        });
+
+        // Individual Checkbox logic
+        $(document).on('change', '.check-item', function() {
+            var table = $(this).closest('table');
+            var allChecked = table.find('.check-item:not(:checked)').length === 0;
+            table.find('.check-all').prop('checked', allChecked);
+        });
+
+        // Pass customer data to Assign Modal
+        var selectedCustomers = [];
+        
+        $('#assignModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            modal.find('#saleSelect').val('');
+            modal.find('#assignNote').val('');
+            selectedCustomers = [];
+            
+            if (button.hasClass('btn-bulk-assign')) {
+                // Bulk mode
+                var tabPane = button.closest('.tab-pane');
+                tabPane.find('.check-item:checked').each(function() {
+                    selectedCustomers.push($(this).data('customer'));
+                });
+                
+                if (selectedCustomers.length === 0) {
+                    alert('กรุณาเลือกรายการลูกค้าที่ต้องการ Assign อย่างน้อย 1 รายการ');
+                    return event.preventDefault(); // Stop modal from opening
+                }
+                modal.find('#assignCustomerName').html(selectedCustomers.length + ' รายการ (ที่เลือกไว้)');
+            } else {
+                // Single mode
+                var customerName = button.data('customer');
+                selectedCustomers.push(customerName);
+                modal.find('#assignCustomerName').html(customerName);
+            }
+        });
+        
+        // Confirm Assign Action
+        $('#btnConfirmAssign').click(function() {
+            var selectedSale = $('#saleSelect option:selected').text();
+            if($('#saleSelect').val() !== "") {
+                var message = 'ทำการส่งต่อลูกค้าเรียบร้อยแล้ว ให้กับ: ' + selectedSale + '\n';
+                if(selectedCustomers.length > 1) {
+                    message += 'จำนวน: ' + selectedCustomers.length + ' รายการ\n';
+                    message += 'ได้แก่: ' + selectedCustomers.join(', ');
+                }
+                alert(message);
+                // Uncheck all after success
+                $('.check-item, .check-all').prop('checked', false);
+            } else {
+                alert('กรุณาเลือกพนักงานขายที่ต้องการส่งต่อ');
+                return false;
+            }
+        });
+
+        // Initialize Charts
+        var ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+        var doughnutChart = new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: ['New Lead', 'Follow', 'Walk In', 'Appoint', 'Overdue'],
+                datasets: [{
+                    data: [4, 3, 1, 1, 1],
+                    backgroundColor: ['#2ecc71', '#f39c12', '#7f8c8d', '#3498db', '#e74c3c'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: { family: 'Kanit' },
+                            boxWidth: 12
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxBar = document.getElementById('barChart').getContext('2d');
+        var barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['สมชาย ใจดี', 'สมหญิง ขยันขาย'],
+                datasets: [
+                    { label: 'New Lead', data: [3, 1], backgroundColor: '#2ecc71' },
+                    { label: 'Follow', data: [2, 1], backgroundColor: '#f39c12' },
+                    { label: 'Walk In', data: [1, 0], backgroundColor: '#7f8c8d' },
+                    { label: 'Appoint', data: [0, 1], backgroundColor: '#3498db' },
+                    { label: 'Overdue', data: [1, 0], backgroundColor: '#e74c3c' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, ticks: { font: { family: 'Kanit' } } },
+                    y: { stacked: true, ticks: { font: { family: 'Kanit' }, stepSize: 1 } }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: 'Kanit' }, boxWidth: 12 }
+                    }
+                }
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>
